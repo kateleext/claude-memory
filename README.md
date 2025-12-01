@@ -2,7 +2,7 @@
 
 An MCP server that gives Claude Code persistent memory across sessions.
 
-A small project I'm sharing. Feedback and PRs welcome.
+Built for my own use. I hope it helps you the way it's helped me. Feedback and PRs welcome.
 
 ## The Idea
 
