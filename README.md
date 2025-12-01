@@ -59,8 +59,6 @@ export CLAUDE_PROJECTS_PATH="/your/path/here"
 export CLAUDE_MEMORY_NOTES_PATH="/your/path/notes.json"
 ```
 
-Or create a `.env` file in the repo.
-
 ## Troubleshooting
 
 **"No sessions found"**: You need conversation history in `~/.claude/projects/`.
@@ -73,7 +71,6 @@ Or create a `.env` file in the repo.
 
 - All data stays on your machine
 - Read-only access to conversation files
-- No external API calls
 
 ## License
 
