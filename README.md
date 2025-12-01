@@ -1,143 +1,93 @@
-# Memory MCP Server
+# Memory Palace
 
-An MCP (Model Context Protocol) server that allows Claude Code to search and read your local conversation history.
+An MCP server that gives Claude Code persistent memory across sessions.
 
-> **For Claude**: See [USAGE_GUIDE.md](./USAGE_GUIDE.md) for detailed guidance on when and how to use this tool effectively.
+A small project I'm sharing. Feedback welcome. Reach out at kate@takuma.ai or open an issue.
 
-## Features
+## The Idea
 
-- **Search conversations** - Full-text search across all your Claude Code chats (returns excerpts)
-- **Get full conversations** - Retrieve complete conversation by session ID (use sparingly)
-- **List recent chats** - Get your most recent conversations with summaries
-- **Project filtering** - Search within specific projects
-- **Minimal context usage** - Smart design returns small excerpts first, full content only when needed
+Claude Code sessions are stateless. Every conversation starts fresh. This server gives Claude read access to your conversation history, indexed for search and navigation.
 
-## Installation
+It's a memory palace, not synthesized memory. No AI-generated summaries or interpretations. Just your actual conversations, structured and searchable. Fresh context windows become liberating: start clean, pull in exactly what you need.
+
+## Quick Start
+
+Requires Python 3.10+.
 
 ```bash
-# Navigate to the server directory
-cd tools/servers/memory
-
-# Install dependencies (if not already installed)
-./venv/bin/pip install -r requirements.txt
+git clone https://github.com/kateleext/claude-memory.git
+cd claude-memory
+./setup.sh
 ```
+
+The script checks your Python version, creates a virtual environment, and installs dependencies. Follow the printed instructions to register with Claude Code.
+
+**Verify it works:**
+```
+Search my recent sessions for anything about [topic you remember discussing]
+```
+
+If Claude finds your past conversations, you're set.
+
+## Tools
+
+| Tool | What it does |
+|------|--------------|
+| `search_memory` | Find sessions by keyword. Searches todos, notes, files touched, with full-text fallback. |
+| `list_recent` | Browse recent sessions with summaries. |
+| `list_chapters` | See session structure: chapters (from todos), pending work, notes. |
+| `read_messages` | Load actual content by chapter, turn, or range. |
+| `add_note` | Leave a breadcrumb on a session for future searches. |
+| `list_projects` | See available project names for filtering. |
+
+## How It Works
+
+**Todos as chapters.** When you use TodoWrite, those todos become a structured index. Each completed todo marks a chapter boundary. The more diligently you use todos during sessions, the more navigable your memory becomes.
+
+**Multiple signals.** Search checks todos (3x weight), notes (3x), files touched (2x), commands run (1x), and full text as fallback.
+
+**Progressive depth.** Search first, get chapter summaries, then pull just what you need. Avoid loading full conversations into context.
+
+**Access, not synthesis.** This server provides raw access to your conversations. If you want synthesis, digests, or summaries, prompt a subagent to read your history and produce what you need. The synthesis layer is yours to define.
+
+## Use Cases
+
+- **Clean context**: conversation got bloated, start fresh and pull just the chapter you need
+- **Knowledge transfer**: document how a project came together to share with teammates
+- **Decision archaeology**: find where and why a past decision was made
+- **Resume abandoned work**: pick up where you left off weeks ago
+
+See `reference/use-cases.md` for example prompts.
 
 ## Configuration
 
-Add this server to Claude Code:
+Reads from `~/.claude/projects/` by default. Notes stored at `~/.claude/memory-notes.json`.
+
+To customize:
 
 ```bash
-claude mcp add memory "/Users/kate/Projects/takuma-os/tools/servers/memory/run.sh"
+export CLAUDE_PROJECTS_PATH="/your/path/here"
+export CLAUDE_MEMORY_NOTES_PATH="/your/path/notes.json"
 ```
 
-Or manually edit `~/.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "memory": {
-      "command": "/Users/kate/Projects/takuma-os/tools/servers/memory/run.sh"
-    }
-  }
-}
-```
-
-## Available Tools
-
-### search_conversations
-Search through all Claude Code conversations.
-
-Parameters:
-- `query` (required): Search text
-- `project` (optional): Limit to specific project
-- `includeAssistant` (optional): Include assistant responses (default: false)
-- `limit` (optional): Max results (default: 20)
-
-Example:
-```
-Search for: "time management pivot"
-In project: "-Users-kate-Projects-takuma-os"
-```
-
-### get_conversation
-Retrieve a complete conversation by session ID.
-
-Parameters:
-- `sessionId` (required): The conversation session ID
-
-Example:
-```
-Get conversation: "be8bb112-4041-4fc8-82a5-5e0c0e006364"
-```
-
-### list_recent
-List your most recent conversations.
-
-Parameters:
-- `limit` (optional): Number of conversations (default: 10)
-
-### list_projects
-List all available Claude Code projects.
-
-## Data Location
-
-The server reads from your Claude Code conversation history stored at:
-```
-~/.claude/projects/
-```
-
-Each project has its own subdirectory containing JSONL files for each conversation.
-
-## Privacy & Security
-
-- All data stays local on your machine
-- No external API calls or data transmission
-- Read-only access to conversation files
-- Runs entirely within your Claude Code environment
-
-## Development
-
-```bash
-# Run in development mode (with hot reload)
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
-
-## Conversation Structure
-
-Claude Code stores conversations in JSONL format with entries like:
-- `type: "user"` - User messages
-- `type: "assistant"` - Claude's responses
-- `type: "summary"` - Conversation summaries
-- `type: "system"` - System metadata
-
-Each entry contains:
-- `timestamp` - ISO format timestamp
-- `sessionId` - Unique conversation identifier
-- `message` - The actual content
-- `uuid` - Unique message identifier
-
-## Example Usage in Claude Code
-
-Once configured, you can ask Claude:
-- "Search my history for conversations about time management"
-- "Find when we discussed the pivot from money to time"
-- "Show me recent conversations about Kane"
-- "Get the full conversation from session be8bb112-4041-4fc8-82a5-5e0c0e006364"
+Or create a `.env` file in the repo.
 
 ## Troubleshooting
 
-If the server doesn't work:
-1. Check that `~/.claude/projects/` exists and contains JSONL files
-2. Verify the server path in settings.json is correct
-3. Restart Claude Code after adding the MCP server
-4. Check Claude Code logs for any error messages
+**"Python 3.10+ required"**: Install a newer Python. On macOS: `brew install python@3.12`. On Ubuntu: `sudo apt install python3.12`.
+
+**"No sessions found"**: Make sure you have conversation history in `~/.claude/projects/`. Each project directory should contain `.jsonl` files.
+
+**Search returns nothing**: Try broader terms. The server stems words, so "authenticate" matches "authentication". Check `list_projects` to verify your project is being indexed.
+
+**Missing chapters**: Chapters come from completed todos. Sessions without TodoWrite usage will still be searchable, but won't have chapter structure.
+
+## Privacy
+
+- All data stays on your machine
+- Read-only access to conversation files
+- No external API calls
 
 ## License
 
-Part of Takuma OS - internal tool for Kate's projects.
+MIT
