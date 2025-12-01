@@ -6,9 +6,9 @@ A small project I'm sharing. Feedback and PRs welcome. Reach out at kate@takuma.
 
 ## The Idea
 
-Claude Code sessions are stateless. Every conversation starts fresh. This server gives Claude read access to your conversation history, indexed for search and navigation.
+You know the feeling. 5% till auto-compact, but you're holding onto the session because it has nuanced history you haven't documented yet. So you ask for a quick summary before it's gone. But that summary is lossy, built on a bloated, degraded context. Before you know it your codebase has 50 markdown files, each tracking decisions from a different Claude under pressure.
 
-It's a memory palace, not synthesized memory. No AI-generated summaries or interpretations. Just your actual conversations, structured and searchable. Fresh context windows become liberating: start clean, pull in exactly what you need.
+But why? All your conversation history exists in raw form on your computer. Sessions are arbitrary boundaries. This memory palace lets Claude search past conversations and pull relevant excerpts, paginated so you only load what you need. Start fresh freely. When you want documentation, spin up a dedicated agent with clean context to read the raw history and do it right.
 
 ## Quick Start
 
@@ -35,13 +35,13 @@ Claude will read `INSTALLATION.md` and walk you through it. Requires Python 3.10
 
 **Multiple signals.** Search checks todos (3x weight), notes (3x), files touched (2x), commands run (1x), and full text as fallback.
 
-**Progressive depth.** Search first, get chapter summaries, then pull just what you need. Avoid loading full conversations into context.
+**Progressive depth.** Search first, get the outline, then pull just what you need. Avoid loading full conversations into context.
 
 **Access, not synthesis.** This server provides raw access to your conversations. If you want synthesis, digests, or summaries, prompt a subagent to read your history and produce what you need. The synthesis layer is yours to define.
 
 ## Use Cases
 
-- **Clean context**: conversation got bloated, start fresh and pull just the chapter you need
+- **Clean context**: conversation got bloated, start fresh and pull just the parts you need
 - **Knowledge transfer**: document how a project came together to share with teammates
 - **Decision archaeology**: find where and why a past decision was made
 - **Resume abandoned work**: pick up where you left off weeks ago
