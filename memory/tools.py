@@ -319,6 +319,30 @@ async def list_chapters(session_id: str) -> dict:
     }
 
 
+def _get_tool_detail(tool_name: str, tool_input: dict) -> str:
+    """Extract key detail from tool call for display."""
+    if tool_name in ['Read', 'Write', 'Edit']:
+        path = tool_input.get('file_path', '')
+        return path.split('/')[-1] if path else ''  # Just filename
+    elif tool_name == 'Bash':
+        cmd = tool_input.get('command', '')
+        return cmd[:50] + '...' if len(cmd) > 50 else cmd
+    elif tool_name in ['Grep', 'Glob']:
+        return tool_input.get('pattern', '')
+    elif tool_name == 'WebFetch':
+        url = tool_input.get('url', '')
+        # Extract domain
+        if '://' in url:
+            url = url.split('://')[1]
+        return url.split('/')[0]
+    elif tool_name == 'Task':
+        return tool_input.get('description', '')
+    elif tool_name == 'TodoWrite':
+        todos = tool_input.get('todos', [])
+        return f"{len(todos)} items"
+    return ''
+
+
 @mcp.tool()
 async def read_messages(
     session_id: str,
@@ -387,13 +411,24 @@ async def read_messages(
                     'userTurn': user_turn_count
                 })
             elif entry.get('type') == 'assistant' and entry.get('message'):
-                text_parts = []
+                parts = []
                 for item in entry['message'].get('content', []):
-                    if isinstance(item, dict) and item.get('type') == 'text':
-                        text_parts.append(item.get('text', ''))
+                    if isinstance(item, dict):
+                        if item.get('type') == 'text':
+                            parts.append(item.get('text', ''))
+                        elif item.get('type') == 'tool_use':
+                            tool_name = item.get('name', 'unknown')
+                            tool_input = item.get('input', {})
+                            tool_detail = _get_tool_detail(tool_name, tool_input)
+                            if tool_detail:
+                                parts.append(f"[{tool_name}: {tool_detail}]")
+                            else:
+                                parts.append(f"[{tool_name}]")
+
+                content = '\n'.join(parts)
                 messages.append({
                     'role': 'assistant',
-                    'content': '\n'.join(text_parts),
+                    'content': content,
                     'timestamp': entry.get('timestamp', ''),
                     'index': message_index,
                     'userTurn': user_turn_count

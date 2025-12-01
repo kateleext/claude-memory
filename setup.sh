@@ -12,12 +12,10 @@ MAJOR=$(echo "$PYTHON_VERSION" | cut -d. -f1)
 MINOR=$(echo "$PYTHON_VERSION" | cut -d. -f2)
 
 if [ "$MAJOR" -lt 3 ] || ([ "$MAJOR" -eq 3 ] && [ "$MINOR" -lt 10 ]); then
-    echo "Error: Python 3.10+ required. You have Python $PYTHON_VERSION."
+    echo "Error: Python 3.10+ required (you have $PYTHON_VERSION)."
     echo ""
-    echo "Options:"
-    echo "  - macOS: brew install python@3.12"
-    echo "  - Ubuntu: sudo apt install python3.12"
-    echo "  - Or use pyenv: pyenv install 3.12"
+    echo "The MCP SDK requires Python 3.10+. Help the user upgrade Python using"
+    echo "pyenv, homebrew, or their system package manager, then re-run ./setup.sh"
     exit 1
 fi
 
@@ -32,8 +30,8 @@ echo "Installing dependencies..."
 ./venv/bin/pip install --upgrade pip --quiet
 ./venv/bin/pip install -r requirements.txt --quiet
 
+echo "Registering with Claude Code (user level)..."
+claude mcp add memory -s user "$SCRIPT_DIR/run.sh"
+
 echo ""
-echo "Done! Now run:"
-echo "  claude mcp add memory \"$SCRIPT_DIR/run.sh\""
-echo ""
-echo "Then restart Claude Code."
+echo "Done! Restart Claude Code to load the memory server."

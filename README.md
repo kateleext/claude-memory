@@ -2,7 +2,7 @@
 
 An MCP server that gives Claude Code persistent memory across sessions.
 
-A small project I'm sharing. Feedback welcome. Reach out at kate@takuma.ai or open an issue.
+A small project I'm sharing. Feedback and PRs welcome. Reach out at kate@takuma.ai or open an issue.
 
 ## The Idea
 
@@ -12,22 +12,11 @@ It's a memory palace, not synthesized memory. No AI-generated summaries or inter
 
 ## Quick Start
 
-Requires Python 3.10+.
+Ask Claude Code:
 
-```bash
-git clone https://github.com/kateleext/claude-memory.git
-cd claude-memory
-./setup.sh
-```
+> Install the memory server from https://github.com/kateleext/claude-memory
 
-The script checks your Python version, creates a virtual environment, and installs dependencies. Follow the printed instructions to register with Claude Code.
-
-**Verify it works:**
-```
-Search my recent sessions for anything about [topic you remember discussing]
-```
-
-If Claude finds your past conversations, you're set.
+Claude will read `INSTALLATION.md` and walk you through it. Requires Python 3.10+.
 
 ## Tools
 
@@ -74,11 +63,9 @@ Or create a `.env` file in the repo.
 
 ## Troubleshooting
 
-**"Python 3.10+ required"**: Install a newer Python. On macOS: `brew install python@3.12`. On Ubuntu: `sudo apt install python3.12`.
+**"No sessions found"**: You need conversation history in `~/.claude/projects/`.
 
-**"No sessions found"**: Make sure you have conversation history in `~/.claude/projects/`. Each project directory should contain `.jsonl` files.
-
-**Search returns nothing**: Try broader terms. The server stems words, so "authenticate" matches "authentication". Check `list_projects` to verify your project is being indexed.
+**Search returns nothing**: Try broader terms. The server stems words, so "authenticate" matches "authentication".
 
 **Missing chapters**: Chapters come from completed todos. Sessions without TodoWrite usage will still be searchable, but won't have chapter structure.
 
