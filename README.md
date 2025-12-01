@@ -6,9 +6,9 @@ A small project I'm sharing. Feedback and PRs welcome. Reach out at kate@takuma.
 
 ## The Idea
 
-You know the feeling. 5% till auto-compact, but you're holding onto the session because it has nuanced history you haven't documented yet. So you ask for a quick summary before it's gone. But that summary is lossy, built on a bloated, degraded context. Before you know it your codebase has 50 markdown files, each tracking decisions from a different Claude under pressure.
+5% till auto-compact. You ask for a quick summary before it's gone, but much of the detail is lost. Before you know it, your codebase root has 50 markdown files, each from a different Claude under pressure.
 
-But why? All your conversation history exists in raw form on your computer. Sessions are arbitrary boundaries. This memory palace lets Claude search past conversations and pull relevant excerpts, paginated so you only load what you need. Start fresh freely. When you want documentation, spin up a dedicated agent with clean context to read the raw history and do it right.
+Sessions are arbitrary boundaries, and your entire conversation history already exists raw on disk. The problem is what gets loaded when. This server gives Claude a way to search and retrieve what it needs. Start fresh freely. Document with dedicated agents who can read the raw history with clean context.
 
 ## Quick Start
 
