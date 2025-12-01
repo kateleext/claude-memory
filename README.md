@@ -2,7 +2,7 @@
 
 An MCP server that gives Claude Code persistent memory across sessions.
 
-Built for my own use. I hope it helps you the way it's helped me. Feedback and PRs welcome.
+I built this for my own use, and I hope it helps you the way it's helped me. I'd love to hear how you use it so we can make it better together. Reach me at kate@takuma.ai
 
 ## The Idea
 
@@ -76,6 +76,3 @@ export CLAUDE_MEMORY_NOTES_PATH="/your/path/notes.json"
 
 MIT
 
----
-
-Questions or ideas? kate@takuma.ai or open an issue.
